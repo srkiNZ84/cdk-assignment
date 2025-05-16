@@ -1,0 +1,11 @@
+.idea/
+dist/
+node_modules/
+coverage/
+.DS_Store
+!jest.config.js
+!.eslintrc.js
+
+# CDK asset staging directory
+.cdk.staging
+cdk.out
