@@ -8,8 +8,6 @@ jobs:
     build:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v3
-
             - name: Install dependencies
               run: npm install
 
@@ -17,6 +15,8 @@ jobs:
               run: npm run build:app
              
             - name: Build the Docker image
+              env:
+                AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
               run: docker build -t $AWS_ACCOUNT_ID.dkr.ecr.ap-southeast-2.amazonaws.com/sample-stack-app:latest .
 
             - name: Authenticate to ECR
