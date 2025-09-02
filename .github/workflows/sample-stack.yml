@@ -4,9 +4,16 @@ on:
     push:
         branches:
             - main
+
 jobs:
     build:
         runs-on: ubuntu-latest
+        env:
+            AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+            AWS_REGION: ap-southeast-2
+            AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
         steps:
             - uses: actions/checkout@v3
 
@@ -17,17 +24,10 @@ jobs:
               run: npm run build:app
              
             - name: Build the Docker image
-              env:
-                AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
               run: docker build -t $AWS_ACCOUNT_ID.dkr.ecr.ap-southeast-2.amazonaws.com/sample-stack-app:latest .
 
             - name: Authenticate to ECR
-              env:
-                AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
-                AWS_REGION: ap-southeast-2
-                AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-                AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-              run: aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.ap-southeast-2.amazonaws.com
+              run: aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
 
             - name: Push the Docker image to ECR
               run: docker push $AWS_ACCOUNT_ID.dkr.ecr.ap-southeast-2.amazonaws.com/sample-stack-app:latest
