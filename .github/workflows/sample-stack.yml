@@ -38,6 +38,7 @@ jobs:
               run: docker push $AWS_ECR_REGISTRY:latest
     deploy_app:
         name: Deploy the CDK stack
+        needs: build_app
         runs-on: ubuntu-latest
         env:
             AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
